@@ -1,3 +1,5 @@
+import Link from 'next/link';
+
 export default function CreateTopicForm() {
   return (
     <form>
@@ -20,12 +22,12 @@ export default function CreateTopicForm() {
         </div>
       </div>
       <div className="mt-6 flex justify-end gap-4">
-        <link
+        <Link
           href="/ui"
           className="flex h-10 items-center rounded-lg bg-gray-100 px-4 text-sm font-medium text-gray-600 transition-colors hover:bg-gray-200"
         >
           Cancel
-        </link>
+        </Link>
         <button type="submit">Create Topic</button>
       </div>
     </form>
