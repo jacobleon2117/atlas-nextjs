@@ -1,9 +1,18 @@
 import { fetchQuestions } from "@/lib/data";
 
+export const runtime = 'nodejs';
+
 export async function GET(
-  req: Request,
-  { params }: { params: { id: string } }
+  request: Request,
+  context: { params: { id: string } }
 ) {
-  const questions = await fetchQuestions(params.id);
-  return Response.json(questions);
+  try {
+    const questions = await fetchQuestions(context.params.id);
+    return Response.json(questions);
+  } catch (error) {
+    return Response.json(
+      { error: "Failed to fetch questions" },
+      { status: 500 }
+    );
+  }
 }

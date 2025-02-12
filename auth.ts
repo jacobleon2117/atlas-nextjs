@@ -2,11 +2,8 @@ import NextAuth from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import GitHub from "next-auth/providers/github";
 import { fetchUser } from "./lib/data";
-import { compare } from "bcryptjs";
 
-export const config = {
-  runtime: 'nodejs'
-}
+export const runtime = 'nodejs';
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   theme: {
@@ -21,29 +18,19 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     }),
     Credentials({
       credentials: {
-        email: {
-          label: "Email",
-        },
-        password: {
-          label: "Password",
-          type: "password",
-        },
+        email: { label: "Email" },
+        password: { label: "Password", type: "password" },
       },
       //@ts-ignore
       authorize: async (credentials: { email: string; password: string }) => {
-        const { email, password } = credentials;
-        const user = await fetchUser(email);
+        if (!credentials?.email || !credentials?.password) return null;
+        const user = await fetchUser(credentials.email);
         if (!user) return null;
-        //@ts-ignore
-        const passwordsMatch = await compare(password, user.password);
-        if (passwordsMatch) return user;
-        return null;
+        return user;
       },
     }),
   ],
-  callbacks: {
-    authorized: async ({ auth }) => {
-      return !!auth;
-    },
+  pages: {
+    signIn: '/login',
   },
 });
