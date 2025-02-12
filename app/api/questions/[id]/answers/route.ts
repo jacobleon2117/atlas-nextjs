@@ -3,15 +3,14 @@ import { NextRequest } from "next/server";
 
 export async function GET(
   request: NextRequest,
-  context: { params: Record<string, string> }
+  { params }: { params: { id: string } }
 ) {
   try {
-    const { id } = context.params;
-    if (!id) {
+    if (!params?.id) {
       return new Response(JSON.stringify({ error: "Missing ID parameter" }), { status: 400 });
     }
 
-    const answers = await fetchAnswers(id);
+    const answers = await fetchAnswers(params.id);
     return Response.json(answers);
   } catch (error) {
     return new Response(JSON.stringify({ error: "Failed to fetch answers" }), { status: 500 });
