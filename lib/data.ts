@@ -1,5 +1,5 @@
 import { sql } from "@vercel/postgres";
-import { Question, Topic, User } from "./definitions";
+import { Answer, Question, Topic, User } from "./definitions";
 
 export async function fetchUser(email: string): Promise<User | undefined> {
   try {
@@ -75,5 +75,37 @@ export async function incrementVotes(id: string) {
   } catch (error) {
     console.error("Database Error:", error);
     throw new Error("Failed to increment votes.");
+  }
+}
+
+export async function fetchQuestion(id: string) {
+  try {
+    const data = await sql<Question>`
+      SELECT * FROM questions WHERE id = ${id}
+    `;
+    return data.rows[0];
+  } catch (error) {
+    console.error("Database Error:", error);
+    throw new Error("Failed to fetch question.");
+  }
+}
+
+export async function fetchAnswers(questionId: string) {
+  try {
+    const data = await sql<Answer>`
+      SELECT answers.*, 
+        CASE 
+          WHEN answers.id = (SELECT answer_id FROM questions WHERE id = ${questionId})
+          THEN true 
+          ELSE false 
+        END as is_accepted
+      FROM answers 
+      WHERE question_id = ${questionId}
+      ORDER BY is_accepted DESC, id ASC
+    `;
+    return data.rows;
+  } catch (error) {
+    console.error("Database Error:", error);
+    throw new Error("Failed to fetch answers.");
   }
 }
