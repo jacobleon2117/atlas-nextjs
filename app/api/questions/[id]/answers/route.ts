@@ -1,18 +1,12 @@
 import { fetchAnswers } from "@/lib/data";
 import { NextRequest, NextResponse } from "next/server";
 
-type Context = {
-  params: {
-    id: string;
-  };
-};
-
 export async function GET(
-  request: NextRequest,
-  context: Context
+  _req: Request,
+  { params }: { params: { id: string } }
 ) {
   try {
-    const answers = await fetchAnswers(context.params.id);
+    const answers = await fetchAnswers(params.id);
     return NextResponse.json(answers);
   } catch (error) {
     return NextResponse.json(
