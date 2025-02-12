@@ -1,15 +1,19 @@
 import { fetchQuestions } from "@/lib/data";
-import { NextRequest, NextResponse } from "next/server";
+import { type NextRequest } from "next/server";
+
+interface RouteContext {
+  params: { id: string }
+}
 
 export async function GET(
-  _req: Request,
-  { params }: { params: { id: string } }
+  request: NextRequest,
+  { params }: RouteContext
 ) {
   try {
     const questions = await fetchQuestions(params.id);
-    return NextResponse.json(questions);
+    return Response.json(questions);
   } catch (error) {
-    return NextResponse.json(
+    return Response.json(
       { error: "Failed to fetch questions" },
       { status: 500 }
     );
