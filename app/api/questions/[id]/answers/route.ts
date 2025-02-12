@@ -1,9 +1,14 @@
 import { fetchAnswers } from "@/lib/data";
+import { NextRequest } from "next/server";
 
 export async function GET(
-  request: Request,
-  { params }: { params: { [key: string]: string } }
+  request: NextRequest,
+  { params }: { params: { id: string } }
 ) {
-  const answers = await fetchAnswers(params.id);
-  return Response.json(answers);
+  try {
+    const answers = await fetchAnswers(params.id);
+    return Response.json(answers);
+  } catch (error) {
+    return new Response(JSON.stringify({ error: "Failed to fetch answers" }), { status: 500 });
+  }
 }
