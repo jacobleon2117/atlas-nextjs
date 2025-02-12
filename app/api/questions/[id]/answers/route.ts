@@ -1,20 +1,20 @@
 import { fetchAnswers } from "@/lib/data";
-import { NextRequest } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(
   request: NextRequest,
-  context: { params: Promise<{ id: string }> }
+  { params }: { params: { id: string } }
 ) {
   try {
-    const { id } = await context.params;
+    const { id } = params;
 
     if (!id) {
-      return new Response(JSON.stringify({ error: "Missing ID parameter" }), { status: 400 });
+      return NextResponse.json({ error: "Missing ID parameter" }, { status: 400 });
     }
 
     const answers = await fetchAnswers(id);
-    return Response.json(answers);
+    return NextResponse.json(answers);
   } catch (error) {
-    return new Response(JSON.stringify({ error: "Failed to fetch answers" }), { status: 500 });
+    return NextResponse.json({ error: "Failed to fetch answers" }, { status: 500 });
   }
 }
